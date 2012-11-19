@@ -31,4 +31,4 @@ env/bin/python setup.py develop
 # run the tests
 #env/bin/test
 env/bin/pip install nose coverage
-env/bin/nosetests
+env/bin/nosetests --with-coverage --cover-html --with-xunit
