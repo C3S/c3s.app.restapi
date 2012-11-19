@@ -31,4 +31,4 @@ env/bin/python setup.py develop
 # run the tests
 #env/bin/test
 env/bin/pip install nose coverage
-nosetests
+env/bin/nosetests
