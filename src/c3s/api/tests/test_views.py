@@ -178,7 +178,7 @@ class TestMessageViews(unittest.TestCase):
             '/',
             params=(_message),  # not json: coverage f. valid_message()
             headers=_auth_header,
-            status=400  # expecting bad request
+            status=400  # expecting 400: bad request
             )
 
         # post a message (valid JSON, but not containing 'text')
@@ -187,11 +187,24 @@ class TestMessageViews(unittest.TestCase):
             '/',
             params=json.dumps(_message),
             headers=_auth_header,
-            status=400
+            status=400  # expecting 400: bad request
             )
         #print("----result-----")
         #print(res2)
         self.assertTrue("Missing text" in res2)
+
+        # post a message (valid JSON, but of wrong color)
+        _message = {'text': 'foo',
+                    'color': 'blue'}
+        res2 = app.post(
+            '/',
+            params=json.dumps(_message),
+            headers=_auth_header,
+            status=400  # expecting 400: bad request
+            )
+        #print("----result-----")
+        #print(res2)
+        self.assertTrue("only red and black supported" in res2)
 
         # post a message (valid JSON)
         _message = {'text': 'foo'}

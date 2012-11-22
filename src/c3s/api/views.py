@@ -39,6 +39,9 @@ def valid_token(request):
     user, token = token
 
     valid = user in _USERS and _USERS[user] == token
+    #print("===== debugging _USERS =====")
+    #print(_USERS)
+    #print("===========================")
     if not valid:
         raise HTTPUnauthorized()
 
