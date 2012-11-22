@@ -206,6 +206,19 @@ class TestMessageViews(unittest.TestCase):
         #print(res2)
         self.assertTrue("only red and black supported" in res2)
 
+        # post a message with invalid token
+        _message = {'text': 'foo'}
+        _auth_header_w_invalid_token = {
+            'X-Messaging-Token': str(_token + '123')
+            }
+        res2 = app.post(
+            '/',
+            params=json.dumps(_message),
+            headers=_auth_header_w_invalid_token,
+            status=401  # 401: Unauthorized
+            )
+        self.assertTrue('401 Unauthorized' in res2.body)
+
         # post a message (valid JSON)
         _message = {'text': 'foo'}
         res2 = app.post(
