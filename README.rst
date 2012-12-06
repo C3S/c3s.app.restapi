@@ -1,5 +1,5 @@
-c3s.api -- an API for the Cultural Commons Collecting Society (C3S)
-====================================================================
+c3s.app.restapi -- a RESTful API for the Cultural Commons Collecting Society (C3S)
+===================================================================================
 
 .. image:: https://ci2.c3s.cc/job/c3s.api/badge/icon
    :target: https://ci2.c3s.cc/job/c3s.api/
