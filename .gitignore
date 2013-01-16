@@ -7,3 +7,14 @@ lib/
 *.egg-info/
 *.pyc
 *~
+.installed.cfg
+.project
+.pydevproject
+cover/
+docs/Makefile
+docs/doctrees/
+docs/html/
+docs/make.bat
+eggs/
+local/
+nosetests.xml
