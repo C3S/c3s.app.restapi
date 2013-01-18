@@ -39,7 +39,8 @@ class TestUserViews(unittest.TestCase):
         """
         app = TestApp(main({}))
         _name = 'heinzi'
-        res = app.put('/users', _name, status=200)
+        _namejson = json.dumps({'name': _name})
+        res = app.put('/users', _namejson, status=200)
         # print(res)  # uncomment to see the following output:
         # Content-Type: application/json; charset=UTF-8
         # {"api-version": "0.1dev",
@@ -47,6 +48,8 @@ class TestUserViews(unittest.TestCase):
         self.assertTrue(
             'application/json; charset=UTF-8' in res.headers['Content-Type'])
         # store the body as json
+        #print("the body is json:")
+        #print(res.body)
         _json = json.loads(res.body)
         # print(_json['api-version'])
         self.assertTrue('0.1dev' in _json['api-version'])
@@ -76,13 +79,14 @@ class TestUserViews(unittest.TestCase):
         """
         app = TestApp(main({}))
         _name = 'john'
-        res = app.put('/users', _name)
+        _namejson = json.dumps({'name': _name})
+        res = app.put('/users', _namejson)
         # check response
         self.assertTrue("token" in str(res.body))  # did get a token
         self.assertTrue(_name in str(res.body))  # name found
         # do it again, try to register user of same name
         # expect "Bad Request (400)"
-        res2 = app.put('/users', _name, status=400)
+        res2 = app.put('/users', _namejson, status=400)
         #print(res2)
 # {"status": "error",
 #  "errors": [{
@@ -103,7 +107,8 @@ class TestUserViews(unittest.TestCase):
         """
         app = TestApp(main({}))
         _name = 'mary'
-        res = app.put('/users', _name, status=200)
+        _namejson = json.dumps({'name': _name})
+        res = app.put('/users', _namejson, status=200)
         self.assertTrue(
             'application/json; charset=UTF-8' in res.headers['Content-Type'])
         # store the body as json
@@ -158,7 +163,8 @@ class TestMessageViews(unittest.TestCase):
         #print(res)
 
         _name = 'poster'
-        res = app.put('/users', _name, status=200)
+        _namejson = json.dumps({'name': _name})
+        res = app.put('/users', _namejson, status=200)
 #        self.assertTrue(
 #            'application/json; charset=UTF-8' in res.headers['Content-Type'])
         # store the body as json
@@ -179,7 +185,7 @@ class TestMessageViews(unittest.TestCase):
             params=(_message),  # not json: coverage f. valid_message()
             headers=_auth_header,
             status=400  # expecting 400: bad request
-            )
+        )
 
         # post a message (valid JSON, but not containing 'text')
         _message = {'texte': 'foo'}
@@ -188,7 +194,7 @@ class TestMessageViews(unittest.TestCase):
             params=json.dumps(_message),
             headers=_auth_header,
             status=400  # expecting 400: bad request
-            )
+        )
         #print("----result-----")
         #print(res2)
         self.assertTrue("Missing text" in res2)
@@ -201,7 +207,7 @@ class TestMessageViews(unittest.TestCase):
             params=json.dumps(_message),
             headers=_auth_header,
             status=400  # expecting 400: bad request
-            )
+        )
         #print("----result-----")
         #print(res2)
         self.assertTrue("only red and black supported" in res2)
@@ -210,13 +216,13 @@ class TestMessageViews(unittest.TestCase):
         _message = {'text': 'foo'}
         _auth_header_w_invalid_token = {
             'X-Messaging-Token': str(_token + '123')
-            }
+        }
         res2 = app.post(
             '/',
             params=json.dumps(_message),
             headers=_auth_header_w_invalid_token,
             status=401  # 401: Unauthorized
-            )
+        )
         self.assertTrue('401 Unauthorized' in res2.body)
 
         # post a message (valid JSON)
@@ -226,7 +232,7 @@ class TestMessageViews(unittest.TestCase):
             params=json.dumps(_message),
             headers=_auth_header,
             status=200
-            )
+        )
         #print("----result-----")
         #print(res2)
         self.assertTrue('status' in json.loads(res2.body).keys())
@@ -239,7 +245,7 @@ class TestMessageViews(unittest.TestCase):
             params=json.dumps(_message),
             headers=_auth_header,
             status=200
-            )
+        )
         res3
 
         # get the messages

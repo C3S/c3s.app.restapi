@@ -11,6 +11,7 @@ from cornice import Service
 
 
 api_ver = '0.1dev'
+DEBUG = False
 
 
 # utility function
@@ -34,16 +35,30 @@ def valid_token(request):
        - check whether token is valid
 
     """
+    if DEBUG:  # pragma: no cover
+        print("valid_token()....")
     header = 'X-Messaging-Token'
-
+    #print("the request: ")
+    #print(request)
     token = request.headers.get(header)
+
     if token is None:
         # there was no token in the header: no auth!
+        if DEBUG:  # pragma: no cover
+            print("there was no token in the header: no auth!")
+        request.errors.add(
+            'header',
+            'token',
+            'There was no token in the header!')
         raise HTTPUnauthorized()
 
     token = token.split('-')
     if len(token) != 2:
         # the token was mal-formed
+        if DEBUG:  # pragma: no cover
+            print(" the token was mal-formed:")
+        request.errors.add('header', 'token', 'The token was malformed!')
+        #print(token)
         raise HTTPUnauthorized()
 
     user, token = token
@@ -53,6 +68,9 @@ def valid_token(request):
     #print(_USERS)
     #print("===========================")
     if not valid:
+        if DEBUG:  # pragma: no cover
+            print("still not valid...")
+        request.errors.add('header', 'token', 'The token was not valid!')
         raise HTTPUnauthorized()
 
     request.validated['user'] = user
@@ -65,7 +83,11 @@ def unique(request):
        - check whether username is unique (or already exists)
 
     """
-    name = request.body
+    #print(request.body)
+    req = json.loads(request.body)
+    name = req['name']
+    #print("name: ")
+    #print name
     if name in _USERS:
         request.errors.add('url', 'name', 'This user exists!')
     else:
@@ -91,6 +113,8 @@ def get_info(request):
       {'API version': '0.1dev'}
 
     """
+    if DEBUG:  # pragma: no cover
+        print("@api_version.get()")
     return {'API version': '0.1dev'}
 
 #
@@ -126,9 +150,15 @@ def create_user(request):
         }
 
     """
+    if DEBUG:  # pragma: no cover
+        print("this is create_user() aka @users.put")
+        print("request.validated['user']: ")
+        print(request.validated['user'])
     user = request.validated['user']
+    #print("a typical user:")
+    #print(user)
+    #print(user['name'])
     _USERS[user['name']] = user['token']
-
     return {
         'api-version': api_ver,
         'token': '%s-%s' % (user['name'], user['token'])}
@@ -147,6 +177,8 @@ def del_user(request):
         {'goodbye': exampleusername}
 
     """
+    if DEBUG:  # pragma: no cover
+        print("@users.delete()")
 #    print("--------the request as arrived in del_user--------")
 #    print(request)
 #    print("--------the request._body__del--------")
@@ -185,8 +217,12 @@ def valid_message(request):
     """
     try:
         message = json.loads(request.body)
+        if DEBUG:  # pragma: no cover
+            print(message)
     except ValueError:
         request.errors.add('body', 'message', 'Not valid JSON')
+        if DEBUG:  # pragma: no cover
+            print("Not valid JSON")
         return
 
     # test...
@@ -218,6 +254,8 @@ def get_messages(request):
         list of messages
 
     """
+    if DEBUG:  # pragma: no cover
+        print("get_messages")
     return _MESSAGES[:5]
 
 
@@ -232,5 +270,8 @@ def post_message(request):
         {'status': 'added'}
 
     """
+    if DEBUG:  # pragma: no cover
+        print("@messages.post()")
+
     _MESSAGES.insert(0, request.validated['message'])
     return {'status': 'added'}
